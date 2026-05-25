@@ -15,11 +15,6 @@ class BookController extends Controller
         $books = Book::all();
 
         return BookResource::collection($books);
-//        return response()->json([
-//            'data' => [
-//                'books' => $books
-//            ]
-//        ],200);
     }
 
     public function store(StoreBookRequest $request)
@@ -31,12 +26,6 @@ class BookController extends Controller
         if ($book) {
             return new BookResource($book)
                 ->additional(['message' => 'Book created successfully.']);
-//            return response()->json([
-//                'data' => [
-//                    'status' => 'success',
-//                    'message' => 'book created',
-//                ]
-//            ], 401);
         } else {
             return response()->json([
                 'data' => [
@@ -74,12 +63,6 @@ class BookController extends Controller
 
         return new BookResource($book)
             ->additional(['message' => 'Book updated successfully.']);
-//        return response()->json([
-//            'data' => [
-//                'status' => 'success',
-//                'message' => 'book updated',
-//            ],
-//        ], 201);
     }
 
     public function destroy(Book $book)

@@ -2,10 +2,4 @@ throttle \ rate limit.
 
 index in database
 
-result and error structor must be samane in controllers.
-
-form request ruls value must be array not string.
-
-change isbn rules in store and update formrequest
-
-remove title->unique()
+custome exepction (https://laravel.com/docs/13.x/errors#renderable-exceptions)

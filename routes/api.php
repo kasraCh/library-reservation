@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\reservtion\ReservtionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,4 +21,13 @@ Route::group(['prefix' => 'books', 'as' => 'books', 'middleware' => 'auth:sanctu
     Route::get('{book}', [\App\Http\Controllers\Books\BookController::class, 'show']);
     Route::put('{book}', [\App\Http\Controllers\Books\BookController::class, 'update'])->middleware('admin');
     Route::delete('{book}', [\App\Http\Controllers\Books\BookController::class, 'destroy'])->middleware('admin');
+});
+
+Route::group(['prefix' => 'reservations', 'as' => 'reservations', 'middleware' => 'auth:sanctum'], function () {
+    Route::get('', [ReservtionController::class, 'index']);
+    Route::get('{id}', [ReservtionController::class, 'reservationDetail']);
+    Route::post('', [ReservtionController::class, 'reservdBooks']);
+    Route::patch('{id}/cancel', [ReservtionController::class, 'cancelReservation']);
+    Route::patch('{id}/return', [ReservtionController::class, 'returnReservation']);
+    Route::get('', [ReservtionController::class, 'allReservations']);
 });

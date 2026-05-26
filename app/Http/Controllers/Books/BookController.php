@@ -2,24 +2,34 @@
 
 namespace App\Http\Controllers\Books;
 
-use App\Http\Controllers\Controller;
+use App\Http\Controllers\ApiController;
 use App\Http\Requests\Books\StoreBookRequest;
 use App\Http\Requests\Books\UpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class BookController extends Controller
+class BookController extends ApiController
 {
     public function index()
     {
-        $books = Book::all();
+//        DB::listen(fn ($query) => info($query->toRawSql()));
 
-        return BookResource::collection($books);
-//        return response()->json([
-//            'data' => [
-//                'books' => $books
-//            ]
-//        ],200);
+        $books = Book::query()->with('reservations')->get();
+
+        return $this->successResponse($books,'found all books');
+    }
+
+    public function find()
+    {
+
+        $data = Book::filter(request()->all())->orderBy('created_at', 'desc')->get();
+
+        if (!empty($data)) {
+            return $this->successResponse($data,'found books');
+        }
+        return $this->successResponse($data,'found books');
     }
 
     public function store(StoreBookRequest $request)
@@ -29,57 +39,28 @@ class BookController extends Controller
         $book = Book::create($data);
 
         if ($book) {
-            return new BookResource($book)
-                ->additional(['message' => 'Book created successfully.']);
-//            return response()->json([
-//                'data' => [
-//                    'status' => 'success',
-//                    'message' => 'book created',
-//                ]
-//            ], 401);
+            return $this->successResponse(new BookResource($book), 'book created successfully');
         } else {
-            return response()->json([
-                'data' => [
-                    'status' => 'error',
-                    'message' => 'cant create book'
-                ]
-            ], 400);
+            return $this->errorResponse(null,'error',400);
         }
     }
 
     public function show(Book $book)
     {
 
-        $data = Book::where('id', $book)->firstOrFail();
-
         return response()->json([
             'data' => [
-                'book' => $data
+                'book' => $book
             ]
         ]);
     }
 
     public function update(UpdateBookRequest $request, Book $book)
     {
-        if (!$book) {
-            return response()->json([
-                'data' => [
-                    'status' => 'error',
-                    'message' => 'book not found'
-                ]
-            ]);
-        }
-
         $book->update($request->validated());
 
         return new BookResource($book)
             ->additional(['message' => 'Book updated successfully.']);
-//        return response()->json([
-//            'data' => [
-//                'status' => 'success',
-//                'message' => 'book updated',
-//            ],
-//        ], 201);
     }
 
     public function destroy(Book $book)

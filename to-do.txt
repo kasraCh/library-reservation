@@ -1,5 +1,1 @@
-throttle \ rate limit.
-
 index in database
-
-custome exepction (https://laravel.com/docs/13.x/errors#renderable-exceptions)

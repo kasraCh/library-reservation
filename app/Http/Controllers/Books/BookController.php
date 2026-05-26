@@ -7,14 +7,29 @@ use App\Http\Requests\Books\StoreBookRequest;
 use App\Http\Requests\Books\UpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class BookController extends ApiController
 {
     public function index()
     {
-        $books = Book::all();
+//        DB::listen(fn ($query) => info($query->toRawSql()));
+
+        $books = Book::query()->with('reservations')->get();
 
         return $this->successResponse($books,'found all books');
+    }
+
+    public function find()
+    {
+
+        $data = Book::filter(request()->all())->orderBy('created_at', 'desc')->get();
+
+        if (!empty($data)) {
+            return $this->successResponse($data,'found books');
+        }
+        return $this->successResponse($data,'found books');
     }
 
     public function store(StoreBookRequest $request)

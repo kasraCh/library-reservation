@@ -66,14 +66,13 @@ class ReservationPolicy
 
     public function cancelReservation(User $user, Reservation $reservation)
     {
-//        return $reservation->user_id === $user->id
-//            && $reservation->status == 'active';
         if ($reservation->user_id !== $user->id) {
             return Response::deny('You cannot cancel this reservation.');
         }
+        if($reservation->status === 'cancelled' || $reservation->status === 'returned'){
+            return Response::deny('reservation was canceled.');
+        }
         return Response::allow();
 
-//
-//        return true;
-    }
+   }
 }

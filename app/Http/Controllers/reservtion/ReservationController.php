@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\reservtion;
 
+use App\Events\ReservationCreated;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
@@ -27,7 +28,7 @@ class ReservationController extends ApiController
     {
         Gate::authorize('reserve', $book);
 
-        Reservation::create([
+        $reservation = Reservation::create([
             'user_id' => auth()->id(),
             'book_id' => $book->id,
             'reserved_at' => now(),
@@ -35,7 +36,11 @@ class ReservationController extends ApiController
             'status' => 'active'
         ]);
 
+//        $user = auth()->user();
+
         $book->decrement('available_copies', 1);
+
+        event(new ReservationCreated($reservation, $book));
 
         return $this->successResponse(null, 'Book reserved successfully');
     }

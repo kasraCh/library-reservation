@@ -36,8 +36,6 @@ class ReservationController extends ApiController
             'status' => 'active'
         ]);
 
-        $book->decrement('available_copies', 1);
-
         event(new ReservationCreated($reservation, $book));
 
         return $this->successResponse(null, 'Book reserved successfully');

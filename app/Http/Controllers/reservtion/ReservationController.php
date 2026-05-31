@@ -24,7 +24,7 @@ class ReservationController extends ApiController
         //
     }
 
-    public function reservBook(Request $request, Book $book)
+    public function reserveBook(Request $request, Book $book)
     {
         Gate::authorize('reserve', $book);
 
@@ -36,8 +36,6 @@ class ReservationController extends ApiController
             'status' => 'active'
         ]);
 
-//        $user = auth()->user();
-
         $book->decrement('available_copies', 1);
 
         event(new ReservationCreated($reservation, $book));
@@ -47,13 +45,13 @@ class ReservationController extends ApiController
 
     public function cancelReservation(Reservation $reservation)
     {
-            Gate::authorize('cancelReservation', $reservation);
+        Gate::authorize('cancelReservation', $reservation);
 
-            $reservation->update([
-                'status' => 'cancelled'
-            ]);
+        $reservation->update([
+            'status' => 'cancelled'
+        ]);
 
-            return response()->json(['message' => 'ok']);
+        return response()->json(['message' => 'ok']);
     }
 
     public function returnReservation(Request $request, Reservation $reservation)

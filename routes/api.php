@@ -23,7 +23,7 @@ Route::group(['prefix' => 'books', 'as' => 'books', 'middleware' => 'auth:sanctu
 Route::group(['prefix' => 'reservations', 'as' => 'reservations', 'middleware' => 'auth:sanctum'], function () {
     Route::get('', [ReservationController::class, 'index']);
     Route::get('{id}', [ReservationController::class, 'reservationDetail']);
-    Route::post('{book}', [ReservationController::class, 'reservBook']);
+    Route::post('{book}', [ReservationController::class, 'reserveBook']);
     Route::patch('{reservation}/cancel', [ReservationController::class, 'cancelReservation']);
     Route::patch('{id}/return', [ReservationController::class, 'returnReservation']);
     Route::get('', [ReservationController::class, 'allReservations']);

@@ -4,8 +4,6 @@ namespace App\Listeners;
 
 use App\Events\ReservationCreated;
 use App\Models\ReservationsLog;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class LogReservationActivity
 {

@@ -17,20 +17,7 @@ class ReservationCreated
      */
     public function __construct(public Reservation $reservation, public Book $book)
     {
-//        ReservationsLog::create([
-//            'reservation_id' => $reservation->id,
-//            'book_id' => $book->id,
-//            'user_id' => $this->user->id
-//        ]);
+        //
     }
 
-//    /**
-//     * Get the channels the event should broadcast on.
-//     *
-//     * @return array<int, Channel>
-//     */
-//    public function broadcastOn(): array
-//    {
-//        //
-//    }
 }

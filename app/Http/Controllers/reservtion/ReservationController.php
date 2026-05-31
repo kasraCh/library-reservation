@@ -38,7 +38,9 @@ class ReservationController extends ApiController
             'status' => 'active'
         ]);
 
-        event(new ReservationCreated($reservation, $book));
+        $user = auth()->user();
+
+        event(new ReservationCreated($user,$reservation, $book));
 
         return $this->successResponse(null, 'Book reserved successfully');
     }

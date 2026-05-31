@@ -4,9 +4,12 @@ namespace App\Listeners;
 
 use App\Events\ReservationCreated;
 use App\Models\ReservationsLog;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
-class LogReservationActivity
+class LogReservationActivity implements ShouldQueue
 {
+    use Queueable;
     /**
      * Create the event listener.
      */
@@ -23,7 +26,7 @@ class LogReservationActivity
         ReservationsLog::create([
             'reservation_id' => $event->reservation->id,
             'book_id' => $event->book->id,
-            'user_id' => auth()->user()->id,
+            'user_id' => $event->user->id,
         ]);
     }
 }

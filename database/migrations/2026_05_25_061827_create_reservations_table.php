@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('book_id')->constrained('books');
             $table->enum('status', ['pending', 'active', 'returned', 'cancelled'])->default('pending');
-            $table->time('reserved_at')->nullable();
-            $table->time('due_date');
-            $table->time('returned_at')->nullable();
+            $table->dateTime('reserved_at')->nullable();
+            $table->dateTime('due_date');
+            $table->dateTime('returned_at')->nullable();
             $table->timestamps();
         });
     }

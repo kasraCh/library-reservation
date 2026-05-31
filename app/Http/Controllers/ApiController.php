@@ -21,7 +21,7 @@ class ApiController extends Controller
     public function errorResponse($data=null, string $message='error', int $status=400): JsonResponse
     {
         return Response()->json([
-            'data' => $data,
+//            'data' => $data,
             'message' => $message,
             'status' => $status
         ], $status);

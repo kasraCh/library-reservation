@@ -16,12 +16,14 @@ class ReservationController extends ApiController
 {
     public function index()
     {
-        //
+        $data = Reservation::all();
+
+        return $this->successResponse($data, 'fina all reservations');
     }
 
-    public function reservationDetail(Request $request, Reservation $reservation)
+    public function reservationDetail(Reservation $reservation)
     {
-        //
+        return $this->successResponse($reservation, 'found reservation');
     }
 
     public function reserveBook(Request $request, Book $book)
@@ -49,17 +51,19 @@ class ReservationController extends ApiController
             'status' => 'cancelled'
         ]);
 
-        return response()->json(['message' => 'ok']);
+        return $this->successResponse(null, 'Reservation cancelled successfully');
+
     }
 
-    public function returnReservation(Request $request, Reservation $reservation)
+    public function returnReservation(Reservation $reservation)
     {
-        //
-    }
+        Gate::authorize('returnReservation', $reservation);
 
-    public function allReservations(Request $request, Reservation $reservation)
-    {
-        //
+        $reservation->update([
+            'status' => 'returned'
+        ]);
+
+        return $this->successResponse(null, 'Book return successfully');
     }
 }
 

@@ -23,7 +23,6 @@ class BookController extends ApiController
 
     public function find()
     {
-
         $data = Book::filter(request()->all())->orderBy('created_at', 'desc')->get();
 
         if (!empty($data)) {
@@ -47,32 +46,21 @@ class BookController extends ApiController
 
     public function show(Book $book)
     {
-
-        return response()->json([
-            'data' => [
-                'book' => $book
-            ]
-        ]);
+        return $this->successResponse($book,'found book');
     }
 
     public function update(UpdateBookRequest $request, Book $book)
     {
         $book->update($request->validated());
 
-        return new BookResource($book)
-            ->additional(['message' => 'Book updated successfully.']);
+        return $this->successResponse($book,'book updated successfully');
     }
 
     public function destroy(Book $book)
     {
         $book->delete();
 
-        return response()->json([
-            'data' => [
-                'status' => 'success',
-                'message' => 'book deleted'
-            ]
-        ]);
+        return $this->successResponse($book,'book deleted successfully');
     }
 
 }

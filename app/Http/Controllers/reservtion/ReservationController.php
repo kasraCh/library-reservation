@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\reservtion;
 
+use App\Events\ReservationCreated;
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
@@ -15,19 +16,21 @@ class ReservationController extends ApiController
 {
     public function index()
     {
-        //
+        $data = Reservation::all();
+
+        return $this->successResponse($data, 'fina all reservations');
     }
 
-    public function reservationDetail(Request $request, Reservation $reservation)
+    public function reservationDetail(Reservation $reservation)
     {
-        //
+        return $this->successResponse($reservation, 'found reservation');
     }
 
-    public function reservBook(Request $request, Book $book)
+    public function reserveBook(Request $request, Book $book)
     {
         Gate::authorize('reserve', $book);
 
-        Reservation::create([
+        $reservation = Reservation::create([
             'user_id' => auth()->id(),
             'book_id' => $book->id,
             'reserved_at' => now(),
@@ -35,30 +38,34 @@ class ReservationController extends ApiController
             'status' => 'active'
         ]);
 
-        $book->decrement('available_copies', 1);
+        $user = auth()->user();
+
+        event(new ReservationCreated($user,$reservation, $book));
 
         return $this->successResponse(null, 'Book reserved successfully');
     }
 
     public function cancelReservation(Reservation $reservation)
     {
-            Gate::authorize('cancelReservation', $reservation);
+        Gate::authorize('cancelReservation', $reservation);
 
-            $reservation->update([
-                'status' => 'cancelled'
-            ]);
+        $reservation->update([
+            'status' => 'cancelled'
+        ]);
 
-            return response()->json(['message' => 'ok']);
+        return $this->successResponse(null, 'Reservation cancelled successfully');
+
     }
 
-    public function returnReservation(Request $request, Reservation $reservation)
+    public function returnReservation(Reservation $reservation)
     {
-        //
-    }
+        Gate::authorize('returnReservation', $reservation);
 
-    public function allReservations(Request $request, Reservation $reservation)
-    {
-        //
+        $reservation->update([
+            'status' => 'returned'
+        ]);
+
+        return $this->successResponse(null, 'Book return successfully');
     }
 }
 

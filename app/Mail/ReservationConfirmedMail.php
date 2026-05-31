@@ -2,14 +2,13 @@
 
 namespace App\Mail;
 
+use App\Models\Reservation;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use function Laravel\Prompts\text;
 
 class ReservationConfirmedMail extends Mailable
 {
@@ -18,9 +17,10 @@ class ReservationConfirmedMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(Reservation $reservation)
+
     {
-        //
+        $this->reservation = $reservation;
     }
 
     /**
@@ -39,10 +39,7 @@ class ReservationConfirmedMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            text : 'we have received your reservation confirmation',
-            with : [
-                'reservation' => $reservation,
-            ]
+            view: 'Mail.MailSender'
         );
     }
 

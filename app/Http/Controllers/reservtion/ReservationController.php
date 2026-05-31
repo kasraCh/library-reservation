@@ -4,7 +4,6 @@ namespace App\Http\Controllers\reservtion;
 
 use App\Events\ReservationCreated;
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
 use App\Jobs\SendReservationConfirmation;
 use App\Models\Book;
 use App\Models\Reservation;
@@ -41,9 +40,9 @@ class ReservationController extends ApiController
             'status' => 'active'
         ]);
 
-//        SendReservationConfirmation::dispatch($reservation, $user);
-
         $user = auth()->user();
+
+        SendReservationConfirmation::dispatch($reservation);
 
         event(new ReservationCreated($user,$reservation, $book));
 
@@ -71,14 +70,5 @@ class ReservationController extends ApiController
         ]);
 
         return $this->successResponse(null, 'Book return successfully');
-    }
-
-    public function changeTimeToEnd(Reservation $reservation)
-    {
-        $reservation->update([
-            'due_date' => now()->addDays(2),
-        ]);
-
-        return $this->successResponse(null, 'Reservation cancelled successfully');
     }
 }

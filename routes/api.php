@@ -26,5 +26,4 @@ Route::group(['prefix' => 'reservations', 'as' => 'reservations', 'middleware' =
     Route::post('{book}', [ReservationController::class, 'reserveBook']);
     Route::patch('{reservation}/cancel', [ReservationController::class, 'cancelReservation']);
     Route::patch('{reservation}/return', [ReservationController::class, 'returnReservation']);
-    Route::post('{reservation}/time-to-end', [ReservationController::class, 'changeTimeToEnd']);
 });

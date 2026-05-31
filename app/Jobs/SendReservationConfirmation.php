@@ -3,27 +3,28 @@
 namespace App\Jobs;
 
 use App\Mail\ReservationConfirmedMail;
+use App\Models\Reservation;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Mail;
 
 class SendReservationConfirmation implements ShouldQueue
 {
     use Queueable;
 
-    /**
-     * Create a new job instance.
-     */
-    public function __construct()
+    public Reservation $reservation;
+
+    public function __construct(Reservation $reservation)
     {
-        //
+        $this->reservation = $reservation;
     }
 
-
-    /**
-     * Execute the job.
-     */
     public function handle(): void
     {
-        \Mail::to($user->email)->send(new ReservationConfirmedMail($this->reservation));
+        $reservation = $this->reservation->load('user', 'book');
+
+        Mail::to($reservation->user->email)
+            ->send(new ReservationConfirmedMail($reservation));
     }
+
 }

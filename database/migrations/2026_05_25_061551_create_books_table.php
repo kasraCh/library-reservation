@@ -16,8 +16,8 @@ return new class extends Migration
             $table->string('title')->unique();
             $table->string('author');
             $table->integer('isbn')->nullable()->unique();
-            $table->string('total_copies')->nullable();
-            $table->string('available_copies')->nullable();
+            $table->integer('total_copies')->nullable();
+            $table->integer('available_copies')->nullable();
             $table->timestamps();
         });
     }

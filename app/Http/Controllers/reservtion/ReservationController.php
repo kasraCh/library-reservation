@@ -4,7 +4,7 @@ namespace App\Http\Controllers\reservtion;
 
 use App\Events\ReservationCreated;
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
+use App\Jobs\SendReservationConfirmation;
 use App\Models\Book;
 use App\Models\Reservation;
 use App\Models\User;
@@ -30,6 +30,8 @@ class ReservationController extends ApiController
     {
         Gate::authorize('reserve', $book);
 
+//        $user = User::find('id', auth()->user()->id);
+
         $reservation = Reservation::create([
             'user_id' => auth()->id(),
             'book_id' => $book->id,
@@ -39,6 +41,8 @@ class ReservationController extends ApiController
         ]);
 
         $user = auth()->user();
+
+        SendReservationConfirmation::dispatch($reservation);
 
         event(new ReservationCreated($user,$reservation, $book));
 
@@ -68,4 +72,3 @@ class ReservationController extends ApiController
         return $this->successResponse(null, 'Book return successfully');
     }
 }
-

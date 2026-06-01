@@ -1,23 +1,23 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\reservtion\ReservationController;
+use App\Http\Controllers\Reservtion\ReservationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Books\BookController;
 
 Route::group(['prefix' => 'auth', 'as' => 'auth'], function () {
-    Route::post('register', [AuthController::class, 'register']);
-    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1');
     Route::post('logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 });
 
 Route::group(['prefix' => 'books', 'as' => 'books', 'middleware' => 'auth:sanctum'], function () {
     Route::get('', [BookController::class, 'index']);
     Route::get('find', [BookController::class, 'find']);
-    Route::post('', [BookController::class, 'store'])->middleware('admin');
+    Route::post('', [BookController::class, 'store'])->middleware('admin', 'throttle:10,1');
     Route::get('{book}', [BookController::class, 'show']);
     Route::put('{book}', [BookController::class, 'update'])->middleware('admin');
-    Route::delete('{book}', [BookController::class, 'destroy'])->middleware('admin', 'throttle:deleteBook');
+    Route::delete('{book}', [BookController::class, 'destroy'])->middleware('admin', 'throttle:reservation');
 });
 
 Route::group(['prefix' => 'reservations', 'as' => 'reservations', 'middleware' => 'auth:sanctum'], function () {

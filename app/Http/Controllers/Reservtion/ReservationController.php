@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\reservtion;
+namespace App\Http\Controllers\Reservtion;
 
 use App\Events\ReservationCreated;
 use App\Http\Controllers\ApiController;

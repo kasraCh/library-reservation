@@ -29,10 +29,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        RateLimiter::for('deleteBook', function (Request $request) {
+        RateLimiter::for('reservation', function (Request $request) {
            return $request->user() ?
                Limit::perMinute(10)->by($request->ip()) :
-               Limit::perMinute(7)->by($request->ip());
+               Limit::perMinute(1)->by($request->ip());
         });
     }
 }

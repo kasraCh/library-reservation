@@ -17,8 +17,9 @@ class Reservation extends Model
         'reserved_at',
         'due_date',
         'return_at',
-        'returned_at'
+        'returned_at',
     ];
+
     public function book(): BelongsTo
     {
         return $this->belongsTo(Book::class, 'book_id');

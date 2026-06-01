@@ -18,7 +18,6 @@ class ReservationConfirmedMail extends Mailable
      * Create a new message instance.
      */
     public function __construct(Reservation $reservation)
-
     {
         $this->reservation = $reservation;
     }

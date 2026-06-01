@@ -25,8 +25,8 @@ class IsAdminMiddleware
         return response()->json([
             'data' => [
                 'message' => 'Unauthorized',
-                'user' =>Auth::user()
-            ],401
+                'user' => Auth::user(),
+            ], 401,
         ]);
     }
 }

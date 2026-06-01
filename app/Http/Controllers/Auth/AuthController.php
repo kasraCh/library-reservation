@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\LoginRequest;
 use App\Http\Requests\Users\RegisterRequest;
 use App\Http\Resources\UserResource;
@@ -19,6 +18,7 @@ class AuthController extends ApiController
 
         if ($user = User::create($data)) {
             $token = $user->createToken('auth_token')->plainTextToken;
+
             return new UserResource($user)
                 ->additional(['token' => $token, 'message' => 'user created']);
         } else {
@@ -32,7 +32,7 @@ class AuthController extends ApiController
 
         $user = User::where('email', $data['email'])->first();
 
-        if (!$user || !Hash::check($data['password'], $user->password)) {
+        if (! $user || ! Hash::check($data['password'], $user->password)) {
             return $this->errorResponse(null, 'Incorrect email or password');
         }
         $token = $user->createToken('auth_token')->plainTextToken;

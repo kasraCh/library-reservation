@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class LogReservationActivity implements ShouldQueue
 {
     use Queueable;
+
     /**
      * Create the event listener.
      */

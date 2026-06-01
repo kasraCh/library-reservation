@@ -2,14 +2,10 @@
 
 namespace App\Http\Controllers\Reservtion;
 
-use App\Events\ReservationCreated;
 use App\Http\Controllers\ApiController;
 use App\Jobs\SendReservationConfirmation;
 use App\Models\Book;
 use App\Models\Reservation;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -79,7 +75,7 @@ class ReservationController extends ApiController
 
         $reservation->update([
             'status' => 'returned',
-            'returned_at' => now()
+            'returned_at' => now(),
         ]);
 
         return $this->successResponse(null, 'Book return successfully');

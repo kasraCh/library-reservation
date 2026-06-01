@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
 class ReservationController extends ApiController
@@ -33,25 +34,30 @@ class ReservationController extends ApiController
         return $this->successResponse($reservation, 'found reservation');
     }
 
-    public function reserveBook(Request $request, Book $book)
+    public function reserveBook(Book $book)
     {
         Gate::authorize('reserve', $book);
 
-        $reservation = Reservation::create([
-            'user_id' => auth()->id(),
-            'book_id' => $book->id,
-            'reserved_at' => now(),
-            'due_date' => now()->addDays(1),
-            'status' => 'active'
-        ]);
+        try {
+            Cache::lock("reservation:book:{$book->id}", 10)->block(5, function () use ($book, &$reservation) {
+                DB::transaction(function () use ($book, &$reservation) {
 
-        $user = auth()->user();
+                    $reservation = Reservation::create([
+                        'user_id' => auth()->id(),
+                        'book_id' => $book->id,
+                        'reserved_at' => now(),
+                        'due_date' => now()->addDay(),
+                        'status' => 'active',
+                    ]);
 
-        SendReservationConfirmation::dispatch($reservation);
+                    SendReservationConfirmation::dispatch($reservation)->afterCommit();
+                });
+            });
 
-        event(new ReservationCreated($user,$reservation, $book));
-
-        return $this->successResponse(null, 'Book reserved successfully');
+            return $this->successResponse($reservation, 'Book reserved successfully');
+        } catch (\RuntimeException $e) {
+            return $this->errorResponse(null, $e->getMessage(), 409);
+        }
     }
 
     public function cancelReservation(Reservation $reservation)
@@ -59,7 +65,8 @@ class ReservationController extends ApiController
         Gate::authorize('cancelReservation', $reservation);
 
         $reservation->update([
-            'status' => 'cancelled'
+            'status' => 'cancelled',
+            'returned_at' => now(),
         ]);
 
         return $this->successResponse(null, 'Reservation cancelled successfully');
@@ -71,7 +78,8 @@ class ReservationController extends ApiController
         Gate::authorize('returnReservation', $reservation);
 
         $reservation->update([
-            'status' => 'returned'
+            'status' => 'returned',
+            'returned_at' => now()
         ]);
 
         return $this->successResponse(null, 'Book return successfully');

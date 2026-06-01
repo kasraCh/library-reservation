@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Reservation;
+use Illuminate\Support\Facades\Cache;
 
 class ReservationObserver
 {
@@ -19,12 +20,13 @@ class ReservationObserver
      */
     public function updated(Reservation $reservation): void
     {
+        Cache::forget('reservations'.$reservation->user_id);
+
         if ($reservation->wasChanged('status')) {
             if($reservation->status === 'returned' || $reservation->status === 'cancelled') {
                 $reservation->book->increment('available_copies', 1);
             }
         }
-
     }
 
     /**

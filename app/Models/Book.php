@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Observers\BookObserver;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-
+#[ObservedBy(BookObserver::class)]
 class Book extends Model
 {
     protected $fillable = [

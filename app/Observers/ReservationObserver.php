@@ -12,6 +12,8 @@ class ReservationObserver
      */
     public function created(Reservation $reservation): void
     {
+        Cache::forget('reservations'.$reservation->user_id);
+
         $reservation->book->decrement('available_copies', 1);
     }
 
@@ -34,7 +36,7 @@ class ReservationObserver
      */
     public function deleted(Reservation $reservation): void
     {
-        //
+        Cache::forget('reservations'.$reservation->user_id);
     }
 
     /**

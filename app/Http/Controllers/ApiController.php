@@ -18,7 +18,7 @@ class ApiController extends Controller
         $status);
     }
 
-    public function errorResponse($data=null, string $message='error', int $status=400): JsonResponse
+    public function errorResponse($data=null, $message='error', int $status=400): JsonResponse
     {
         return Response()->json([
 //            'data' => $data,

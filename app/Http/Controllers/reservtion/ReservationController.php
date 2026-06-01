@@ -10,13 +10,20 @@ use App\Models\Reservation;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Gate;
 
 class ReservationController extends ApiController
 {
     public function index()
     {
-        $data = Reservation::all();
+        $userID = auth()->id();
+
+        $key = 'reservations'.$userID;
+
+        $data = Cache::remember($key, 60, function () use ($userID) {
+            return Reservation::where('user_id', $userID)->get()->toArray();
+        });
 
         return $this->successResponse($data, 'fina all reservations');
     }
@@ -29,8 +36,6 @@ class ReservationController extends ApiController
     public function reserveBook(Request $request, Book $book)
     {
         Gate::authorize('reserve', $book);
-
-//        $user = User::find('id', auth()->user()->id);
 
         $reservation = Reservation::create([
             'user_id' => auth()->id(),

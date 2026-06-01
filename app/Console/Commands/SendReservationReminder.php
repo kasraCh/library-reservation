@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 use function Pest\Laravel\get;
 
 //#[Signature('app:send-reservation-reminder')]
-#[Description('Command description')]
+//#[Description('Command description')]
 class   SendReservationReminder extends Command
 {
     protected $signature = 'reservation:send-reminders';

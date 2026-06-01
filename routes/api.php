@@ -27,3 +27,5 @@ Route::group(['prefix' => 'reservations', 'as' => 'reservations', 'middleware' =
     Route::patch('{reservation}/cancel', [ReservationController::class, 'cancelReservation']);
     Route::patch('{reservation}/return', [ReservationController::class, 'returnReservation']);
 });
+
+

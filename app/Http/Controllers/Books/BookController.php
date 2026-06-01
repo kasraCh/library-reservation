@@ -8,6 +8,7 @@ use App\Http\Requests\Books\UpdateBookRequest;
 use App\Http\Resources\BookResource;
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class BookController extends ApiController
@@ -16,7 +17,11 @@ class BookController extends ApiController
     {
 //        DB::listen(fn ($query) => info($query->toRawSql()));
 
-        $books = Book::query()->with('reservations')->get();
+//        $books = Book::query()->with('reservations')->get();
+
+        $books = Cache::remember('books.list', 60, function () {
+            return Book::query()->get()->toArray();
+        });
 
         return $this->successResponse($books,'found all books');
     }

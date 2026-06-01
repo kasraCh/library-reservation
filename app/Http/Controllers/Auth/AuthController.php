@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Users\LoginRequest;
 use App\Http\Requests\Users\RegisterRequest;
@@ -10,7 +11,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
-class AuthController extends Controller
+class AuthController extends ApiController
 {
     public function register(RegisterRequest $request)
     {
@@ -21,12 +22,7 @@ class AuthController extends Controller
             return new UserResource($user)
                 ->additional(['token' => $token, 'message' => 'user created']);
         } else {
-            return response()->json([
-                'data' => [
-                    'status' => 'error',
-                    'message' => 'cant create user'
-                ], 400
-            ]);
+            return $this->errorResponse(null, 'User not created');
         }
     }
 
@@ -37,12 +33,7 @@ class AuthController extends Controller
         $user = User::where('email', $data['email'])->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            return response()->json([
-                'data' => [
-                    'status' => 'error',
-                    'message' => 'not found user with this email or password'
-                ], 401
-            ]);
+            return $this->errorResponse(null, 'Incorrect email or password');
         }
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -53,19 +44,9 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         if ($request->user()->currentAccessToken()->delete()) {
-            return response()->json([
-                'data' => [
-                    'status' => 'success',
-                    'message' => 'logout success'
-                ], 200
-            ]);
+            return $this->successResponse(null, 'you logged out');
         }
 
-        return response()->json([
-            'data' => [
-                'status' => 'error',
-                'message' => 'logout error'
-            ], 400
-        ]);
+        return $this->errorResponse(null, 'somethings went wrong, please try again');
     }
 }

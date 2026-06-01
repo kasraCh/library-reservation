@@ -18,10 +18,19 @@ class ApiController extends Controller
         $status);
     }
 
+    public function listResponse($data, $message='success', int $status=200): JsonResponse
+    {
+        return Response()->json([
+            'data' => $data,
+            'message' => $message,
+            'status' => $status
+        ], $status);
+    }
+
     public function errorResponse($data=null, $message='error', int $status=400): JsonResponse
     {
         return Response()->json([
-//            'data' => $data,
+            'data' => $data,
             'message' => $message,
             'status' => $status
         ], $status);

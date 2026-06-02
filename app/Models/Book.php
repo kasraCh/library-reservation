@@ -25,17 +25,20 @@ class Book extends Model
 
     public function scopeFindBook($query, string $search)
     {
-        $query->where('title', 'LIKE', "%$search%");
+        return $query->where('title', 'like', "%{$search}%");
     }
 
-    public function scopeFilterBook($query, array $filters)
-    {
-        $query
-            ->when($filters['search'] ?? null, function ($query) use ($filters) {
-                $query->where('title', 'LIKE', "%{$filters['search']}%");
-            })
-            ->when($filters['isbn'] ?? null, function ($query) use ($filters) {
-                $query->where('isbn', 'LIKE', "%{$filters['isbn']}%");
-            });
-    }
+
+
+
+//    public function scopeFilterBook($query, array $filters)
+//    {
+//        $query
+//            ->when($filters['search'] ?? null, function ($query) use ($filters) {
+//                $query->where('title', 'LIKE', "%{$filters['search']}%");
+//            })
+//            ->when($filters['isbn'] ?? null, function ($query) use ($filters) {
+//                $query->where('isbn', 'LIKE', "%{$filters['isbn']}%");
+//            });
+//    }
 }

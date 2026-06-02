@@ -19,7 +19,7 @@ class SendReservationReminder extends Command
     /**
      * Execute the console command.
      */
-    public function handle() 
+    public function handle()
     {
         $reservations = Reservation::query()
             ->whereDate('due_date', now())

@@ -1,9 +1,10 @@
 <?php
-
-namespace App\Http\Controllers\Reservtion;
+declare(strict_types=1);
+namespace App\Http\Controllers\Reservation;
 
 use App\Events\ReservationCreated;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ReservationResource;
 use App\Jobs\SendReservationConfirmation;
 use App\Models\Book;
 use App\Models\Reservation;
@@ -19,15 +20,15 @@ class ReservationController extends Controller
 
     public function index(): JsonResponse
     {
-        $userID = auth()->id();
+        $userId = auth()->id();
 
-        $key = 'reservations'.$userID;
+        $key = 'reservations'.$userId;
 
-        $data = Cache::remember($key, 60, function () use ($userID) {
-            return Reservation::where('user_id', $userID)->get()->toArray();
+        $data = Cache::remember($key, 60, function () use ($userId) {
+            return Reservation::where('user_id', $userId)->get()->toArray();
         });
 
-        return $this->success($data, 'Reservations retrieved successfully.');
+        return $this->success(ReservationResource::collection($data), 'Reservations retrieved successfully.');
     }
 
     public function reservationDetail(Reservation $reservation): JsonResponse
@@ -57,7 +58,8 @@ class ReservationController extends Controller
                 });
             });
 
-            return $this->success($reservation, 'Reservation booked successfully.');
+            return $this->success(new ReservationResource($reservation), 'Reservation booked successfully.');
+
         } catch (\RuntimeException $e) {
             return $this->failure(null, $e->getMessage(), [], $e->getCode());
         }
@@ -72,7 +74,7 @@ class ReservationController extends Controller
             'returned_at' => now(),
         ]);
 
-        return $this->success($reservation, 'Reservation cancelled successfully.');
+        return $this->success(new ReservationResource($reservation), 'Reservation cancelled successfully.');
     }
 
     public function returnReservation(Reservation $reservation): JsonResponse
@@ -84,6 +86,6 @@ class ReservationController extends Controller
             'returned_at' => now(),
         ]);
 
-        return $this->success($reservation, 'Reservation return successfully.');
+        return $this->success(new ReservationResource($reservation), 'Reservation return successfully.');
     }
 }

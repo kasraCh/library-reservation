@@ -14,13 +14,13 @@ class BookResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return [
-            'title' => $this->title,
-            'author' => $this->author,
-            'isbn' => $this->isbn,
-            'total_copies' => $this->total_copies,
-            'available_copies' => $this->available_copies,
-        ];
-        //        return parent::toArray($request);
+//        return [
+//            'title' => $this->title,
+//            'author' => $this->author,
+//            'isbn' => $this->isbn,
+//            'total_copies' => $this->total_copies,
+//            'available_copies' => $this->available_copies,
+//        ];
+        return parent::toArray($request);
     }
 }

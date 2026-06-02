@@ -28,7 +28,7 @@ class Book extends Model
         $query->where('title', 'LIKE', "%$search%");
     }
 
-    public function scopeFilter($query, array $filters)
+    public function scopeFilterBook($query, array $filters)
     {
         $query
             ->when($filters['search'] ?? null, function ($query) use ($filters) {

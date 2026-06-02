@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Reservtion;
 
-use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Controller;
 use App\Jobs\SendReservationConfirmation;
 use App\Models\Book;
 use App\Models\Reservation;
+use App\Traits\ApiResponse\ApiResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
-class ReservationController extends ApiController
+class ReservationController extends Controller
 {
+    use ApiResponse;
     public function index()
     {
         $userID = auth()->id();
@@ -22,12 +24,12 @@ class ReservationController extends ApiController
             return Reservation::where('user_id', $userID)->get()->toArray();
         });
 
-        return $this->successResponse($data, 'fina all reservations');
+        return $this->success($data, 'Reservations retrieved successfully.');
     }
 
     public function reservationDetail(Reservation $reservation)
     {
-        return $this->successResponse($reservation, 'found reservation');
+        return $this->success($reservation->toArray(), 'Reservation retrieved successfully.');
     }
 
     public function reserveBook(Book $book)
@@ -50,9 +52,9 @@ class ReservationController extends ApiController
                 });
             });
 
-            return $this->successResponse($reservation, 'Book reserved successfully');
+            return $this->success($reservation, 'Reservation booked successfully.');
         } catch (\RuntimeException $e) {
-            return $this->errorResponse(null, $e->getMessage(), 409);
+            return $this->failure(null, $e->getMessage(), [], $e->getCode());
         }
     }
 
@@ -65,8 +67,7 @@ class ReservationController extends ApiController
             'returned_at' => now(),
         ]);
 
-        return $this->successResponse(null, 'Reservation cancelled successfully');
-
+        return $this->success($reservation, 'Reservation cancelled successfully.');
     }
 
     public function returnReservation(Reservation $reservation)
@@ -78,6 +79,6 @@ class ReservationController extends ApiController
             'returned_at' => now(),
         ]);
 
-        return $this->successResponse(null, 'Book return successfully');
+        return $this->success($reservation, 'Reservation return successfully.');
     }
 }

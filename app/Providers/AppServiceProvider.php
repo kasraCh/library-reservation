@@ -25,10 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-//        \Event::listen(
-//            ReservationCreated::class,
-//            LogReservationActivity::class,
-//        );
+        //        \Event::listen(
+        //            ReservationCreated::class,
+        //            LogReservationActivity::class,
+        //        );
         RateLimiter::for('reservation', function (Request $request) {
             return $request->user() ?
                 Limit::perMinute(10)->by($request->ip()) :

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Reservtion;
+namespace App\Http\Controllers\Reservation;
 
 use App\Events\ReservationCreated;
 use App\Http\Controllers\Controller;
@@ -58,6 +58,7 @@ class ReservationController extends Controller
             });
 
             return $this->success($reservation, 'Reservation booked successfully.');
+
         } catch (\RuntimeException $e) {
             return $this->failure(null, $e->getMessage(), [], $e->getCode());
         }

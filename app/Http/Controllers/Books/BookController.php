@@ -5,9 +5,11 @@ namespace App\Http\Controllers\Books;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Books\StoreBookRequest;
 use App\Http\Requests\Books\UpdateBookRequest;
+use App\Http\Resources\BookResource;
 use App\Models\Book;
 use App\Traits\ApiResponse\ApiResponse;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 
 class BookController extends Controller
@@ -20,19 +22,35 @@ class BookController extends Controller
             return Book::query()->get()->toArray();
         });
 
-        return $this->success($books, 'Books retrieved successfully.');
+        return $this->success(BookResource::collection($books), 'Books retrieved successfully.');
     }
 
-    public function find(): JsonResponse
+    public function find(Request $request): JsonResponse
     {
-        $data = Book::FilterBook(request()->all())->orderBy('created_at', 'desc')->get();
+        $search = trim((string) $request->query('search'));
 
-        if (! empty($data)) {
-            return $this->failure($data, 'cant find this book.');
+        if ($search === '') {
+            return $this->failure(null, 'Search term is required.');
         }
 
-        return $this->success($data, 'found your book');
+        $books = Book::query()
+            ->findBook($search)
+            ->latest()
+            ->get();
+
+        if ($books->isEmpty()) {
+            return $this->failure(null, 'No books found.');
+        }
+
+        return $this->success(
+            BookResource::collection($books),
+            'Books found successfully'
+        );
     }
+
+
+
+
 
     public function store(StoreBookRequest $request): JsonResponse
     {
@@ -41,7 +59,7 @@ class BookController extends Controller
         $book = Book::create($data);
 
         if ($book) {
-            return $this->success($book, 'book created successfully.');
+            return $this->success(new BookResource($book), 'book created successfully.');
         }
 
         return $this->failure($book, 'cant create book.');
@@ -49,20 +67,20 @@ class BookController extends Controller
 
     public function show(Book $book): JsonResponse
     {
-        return $this->success($book);
+        return $this->success(new BookResource($book), sprintf('Book no.%d retrieved successfully.', $book->id));
     }
 
     public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
         $book->update($request->validated());
 
-        return $this->success($book, 'book updated successfully.');
+        return $this->success(new BookResource($book), sprintf('Book no.%d update successfully.', $book->id));
     }
 
     public function destroy(Book $book): JsonResponse
     {
         $book->delete();
 
-        return $this->success($book, 'book deleted successfully.');
+        return $this->success(null, 'Bookdelete successfully.');
     }
 }

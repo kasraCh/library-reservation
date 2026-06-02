@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Books\BookController;
-use App\Http\Controllers\Reservtion\ReservationController;
+use App\Http\Controllers\Reservation\ReservationController;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'auth', 'as' => 'auth'], function () {
@@ -13,7 +13,7 @@ Route::group(['prefix' => 'auth', 'as' => 'auth'], function () {
 
 Route::group(['prefix' => 'books', 'as' => 'books', 'middleware' => 'auth:sanctum'], function () {
     Route::get('', [BookController::class, 'index']);
-    Route::get('find', [BookController::class, 'find']);
+    Route::get('search', [BookController::class, 'find']);
     Route::post('', [BookController::class, 'store'])->middleware('admin', 'throttle:10,1');
     Route::get('{book}', [BookController::class, 'show']);
     Route::put('{book}', [BookController::class, 'update'])->middleware('admin');

@@ -7,6 +7,7 @@ use App\Jobs\SendReservationConfirmation;
 use App\Models\Book;
 use App\Models\Reservation;
 use App\Traits\ApiResponse\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -14,7 +15,8 @@ use Illuminate\Support\Facades\Gate;
 class ReservationController extends Controller
 {
     use ApiResponse;
-    public function index()
+
+    public function index(): JsonResponse
     {
         $userID = auth()->id();
 
@@ -27,12 +29,12 @@ class ReservationController extends Controller
         return $this->success($data, 'Reservations retrieved successfully.');
     }
 
-    public function reservationDetail(Reservation $reservation)
+    public function reservationDetail(Reservation $reservation): JsonResponse
     {
         return $this->success($reservation->toArray(), 'Reservation retrieved successfully.');
     }
 
-    public function reserveBook(Book $book)
+    public function reserveBook(Book $book): JsonResponse
     {
         Gate::authorize('reserve', $book);
 
@@ -58,7 +60,7 @@ class ReservationController extends Controller
         }
     }
 
-    public function cancelReservation(Reservation $reservation)
+    public function cancelReservation(Reservation $reservation): JsonResponse
     {
         Gate::authorize('cancelReservation', $reservation);
 
@@ -70,7 +72,7 @@ class ReservationController extends Controller
         return $this->success($reservation, 'Reservation cancelled successfully.');
     }
 
-    public function returnReservation(Reservation $reservation)
+    public function returnReservation(Reservation $reservation): JsonResponse
     {
         Gate::authorize('returnReservation', $reservation);
 

@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class xDueDateReminderMail extends Mailable
+class DueDateReminderMail extends Mailable
 {
     use Queueable, SerializesModels;
 

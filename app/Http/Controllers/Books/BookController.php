@@ -7,12 +7,14 @@ use App\Http\Requests\Books\StoreBookRequest;
 use App\Http\Requests\Books\UpdateBookRequest;
 use App\Models\Book;
 use App\Traits\ApiResponse\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 
 class BookController extends Controller
 {
     use ApiResponse;
-    public function index()
+
+    public function index(): JsonResponse
     {
         $books = Cache::remember('books.list', 60, function () {
             return Book::query()->get()->toArray();
@@ -21,7 +23,7 @@ class BookController extends Controller
         return $this->success($books, 'Books retrieved successfully.');
     }
 
-    public function find()
+    public function find(): JsonResponse
     {
         $data = Book::FilterBook(request()->all())->orderBy('created_at', 'desc')->get();
 
@@ -32,7 +34,7 @@ class BookController extends Controller
         return $this->success($data, 'found your book');
     }
 
-    public function store(StoreBookRequest $request)
+    public function store(StoreBookRequest $request): JsonResponse
     {
         $data = $request->validated();
 
@@ -45,19 +47,19 @@ class BookController extends Controller
         return $this->failure($book, 'cant create book.');
     }
 
-    public function show(Book $book)
+    public function show(Book $book): JsonResponse
     {
         return $this->success($book);
     }
 
-    public function update(UpdateBookRequest $request, Book $book)
+    public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
         $book->update($request->validated());
 
         return $this->success($book, 'book updated successfully.');
     }
 
-    public function destroy(Book $book)
+    public function destroy(Book $book): JsonResponse
     {
         $book->delete();
 

@@ -7,13 +7,15 @@ use App\Http\Requests\Users\LoginRequest;
 use App\Http\Requests\Users\RegisterRequest;
 use App\Models\User;
 use App\Traits\ApiResponse\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     use ApiResponse;
-    public function register(RegisterRequest $request)
+
+    public function register(RegisterRequest $request): JsonResponse
     {
         $data = $request->validated();
 
@@ -26,7 +28,7 @@ class AuthController extends Controller
         return $this->failure();
     }
 
-    public function login(LoginRequest $request)
+    public function login(LoginRequest $request): JsonResponse
     {
         $data = $request->validated();
 
@@ -40,7 +42,7 @@ class AuthController extends Controller
         return $this->success($user, 'User logged in successfully.', ['token' => $token]);
     }
 
-    public function logout(Request $request)
+    public function logout(Request $request): JsonResponse
     {
         if ($request->user()->currentAccessToken()->delete()) {
             return $this->success(null, 'User logged out successfully.');

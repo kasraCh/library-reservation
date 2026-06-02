@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Reservtion;
 
+use App\Events\ReservationCreated;
 use App\Http\Controllers\Controller;
 use App\Jobs\SendReservationConfirmation;
 use App\Models\Book;
@@ -49,6 +50,8 @@ class ReservationController extends Controller
                         'due_date' => now()->addDay(),
                         'status' => 'active',
                     ]);
+
+                    event(new ReservationCreated(auth()->id(), $reservation->id, $book->id));
 
                     SendReservationConfirmation::dispatch($reservation)->afterCommit();
                 });

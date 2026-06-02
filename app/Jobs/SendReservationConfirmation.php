@@ -27,7 +27,7 @@ class SendReservationConfirmation implements ShouldQueue
 
     public function handle(): void
     {
-//        throw new \Exception('Test queue failure');
+        //        throw new \Exception('Test queue failure');
         $reservation = $this->reservation->load('user', 'book');
 
         Mail::to($reservation->user->email)
@@ -41,5 +41,4 @@ class SendReservationConfirmation implements ShouldQueue
             'message' => $exception->getMessage(),
         ]);
     }
-
 }

@@ -3,20 +3,21 @@
 namespace App\Http\Controllers\Reservtion;
 
 use App\Events\ReservationCreated;
-use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Controller;
 use App\Jobs\SendReservationConfirmation;
 use App\Models\Book;
 use App\Models\Reservation;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use App\Traits\ApiResponse\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 
-class ReservationController extends ApiController
+class ReservationController extends Controller
 {
-    public function index()
+    use ApiResponse;
+
+    public function index(): JsonResponse
     {
         $userID = auth()->id();
 
@@ -26,15 +27,15 @@ class ReservationController extends ApiController
             return Reservation::where('user_id', $userID)->get()->toArray();
         });
 
-        return $this->successResponse($data, 'fina all reservations');
+        return $this->success($data, 'Reservations retrieved successfully.');
     }
 
-    public function reservationDetail(Reservation $reservation)
+    public function reservationDetail(Reservation $reservation): JsonResponse
     {
-        return $this->successResponse($reservation, 'found reservation');
+        return $this->success($reservation->toArray(), 'Reservation retrieved successfully.');
     }
 
-    public function reserveBook(Book $book)
+    public function reserveBook(Book $book): JsonResponse
     {
         Gate::authorize('reserve', $book);
 
@@ -50,17 +51,19 @@ class ReservationController extends ApiController
                         'status' => 'active',
                     ]);
 
+                    event(new ReservationCreated(auth()->id(), $reservation->id, $book->id));
+
                     SendReservationConfirmation::dispatch($reservation)->afterCommit();
                 });
             });
 
-            return $this->successResponse($reservation, 'Book reserved successfully');
+            return $this->success($reservation, 'Reservation booked successfully.');
         } catch (\RuntimeException $e) {
-            return $this->errorResponse(null, $e->getMessage(), 409);
+            return $this->failure(null, $e->getMessage(), [], $e->getCode());
         }
     }
 
-    public function cancelReservation(Reservation $reservation)
+    public function cancelReservation(Reservation $reservation): JsonResponse
     {
         Gate::authorize('cancelReservation', $reservation);
 
@@ -69,19 +72,18 @@ class ReservationController extends ApiController
             'returned_at' => now(),
         ]);
 
-        return $this->successResponse(null, 'Reservation cancelled successfully');
-
+        return $this->success($reservation, 'Reservation cancelled successfully.');
     }
 
-    public function returnReservation(Reservation $reservation)
+    public function returnReservation(Reservation $reservation): JsonResponse
     {
         Gate::authorize('returnReservation', $reservation);
 
         $reservation->update([
             'status' => 'returned',
-            'returned_at' => now()
+            'returned_at' => now(),
         ]);
 
-        return $this->successResponse(null, 'Book return successfully');
+        return $this->success($reservation, 'Reservation return successfully.');
     }
 }

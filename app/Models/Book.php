@@ -6,6 +6,7 @@ use App\Observers\BookObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+
 #[ObservedBy(BookObserver::class)]
 class Book extends Model
 {
@@ -14,7 +15,7 @@ class Book extends Model
         'author',
         'isbn',
         'total_copies',
-        'available_copies'
+        'available_copies',
     ];
 
     public function reservations(): HasMany
@@ -27,7 +28,7 @@ class Book extends Model
         $query->where('title', 'LIKE', "%$search%");
     }
 
-    public function scopeFilter($query, array $filters)
+    public function scopeFilterBook($query, array $filters)
     {
         $query
             ->when($filters['search'] ?? null, function ($query) use ($filters) {

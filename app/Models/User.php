@@ -12,21 +12,20 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
-//#[Fillable(['name', 'email', 'password'])]
+// #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-
-//    public mixed $is_admin;
+    //    public mixed $is_admin;
     protected $fillable = [
         'name',
         'email',
         'password',
-        'is_admin'
+        'is_admin',
     ];
 
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasApiTokens, HasFactory, Notifiable;
 
     /**
      * Get the attributes that should be cast.
@@ -45,5 +44,4 @@ class User extends Authenticatable
     {
         return $this->hasMany(Reservation::class);
     }
-
 }

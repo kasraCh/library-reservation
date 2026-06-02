@@ -25,7 +25,7 @@ class ReservationObserver
         Cache::forget('reservations'.$reservation->user_id);
 
         if ($reservation->wasChanged('status')) {
-            if($reservation->status === 'returned' || $reservation->status === 'cancelled') {
+            if ($reservation->status === 'returned' || $reservation->status === 'cancelled') {
                 $reservation->book->increment('available_copies', 1);
             }
         }

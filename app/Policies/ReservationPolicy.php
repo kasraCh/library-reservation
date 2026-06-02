@@ -2,8 +2,8 @@
 
 namespace App\Policies;
 
-use App\Models\User;
 use App\Models\reservation;
+use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
 class ReservationPolicy
@@ -64,24 +64,25 @@ class ReservationPolicy
         return false;
     }
 
-    public function cancelReservation(User $user, Reservation $reservation)
+    public function cancelReservation(User $user, reservation $reservation)
     {
         if ($reservation->user_id !== $user->id) {
             return Response::deny('You cannot cancel this reservation.');
         }
-        if($reservation->status !== 'active'){
+        if ($reservation->status !== 'active') {
             return Response::deny('reservation was canceled.');
         }
+
         return Response::allow();
 
-   }
+    }
 
-    public function returnReservation(User $user, Reservation $reservation)
+    public function returnReservation(User $user, reservation $reservation)
     {
         if ($reservation->user_id !== $user->id) {
             return Response::deny('You cannot cancel this reservation.');
         }
-        if($reservation->status !== 'active'){
+        if ($reservation->status !== 'active') {
             return Response::deny('reservation was returned or canceled.');
         }
 

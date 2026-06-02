@@ -19,8 +19,8 @@ class BookResource extends JsonResource
             'author' => $this->author,
             'isbn' => $this->isbn,
             'total_copies' => $this->total_copies,
-            'available_copies' => $this->available_copies
+            'available_copies' => $this->available_copies,
         ];
-//        return parent::toArray($request);
+        //        return parent::toArray($request);
     }
 }

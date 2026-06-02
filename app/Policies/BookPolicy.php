@@ -81,7 +81,4 @@ class BookPolicy
 
         return Response::allow();
     }
-
-
-
 }

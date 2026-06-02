@@ -10,6 +10,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 class LogReservationActivity implements ShouldQueue
 {
     use Queueable;
+
     /**
      * Create the event listener.
      */
@@ -24,9 +25,9 @@ class LogReservationActivity implements ShouldQueue
     public function handle(ReservationCreated $event): void
     {
         ReservationsLog::create([
-            'reservation_id' => $event->reservation->id,
-            'book_id' => $event->book->id,
-            'user_id' => $event->user->id,
+            'reservation_id' => $event->reservation,
+            'book_id' => $event->book,
+            'user_id' => $event->user,
         ]);
     }
 }

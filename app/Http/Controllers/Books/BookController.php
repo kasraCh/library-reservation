@@ -2,70 +2,67 @@
 
 namespace App\Http\Controllers\Books;
 
-use App\Http\Controllers\ApiController;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\Books\StoreBookRequest;
 use App\Http\Requests\Books\UpdateBookRequest;
-use App\Http\Resources\BookResource;
 use App\Models\Book;
-use Illuminate\Http\Request;
+use App\Traits\ApiResponse\ApiResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 
-class BookController extends ApiController
+class BookController extends Controller
 {
-    public function index()
+    use ApiResponse;
+
+    public function index(): JsonResponse
     {
-//        DB::listen(fn ($query) => info($query->toRawSql()));
-
-//        $books = Book::query()->with('reservations')->get();
-
         $books = Cache::remember('books.list', 60, function () {
             return Book::query()->get()->toArray();
         });
 
-        return $this->successResponse($books,'found all books');
+        return $this->success($books, 'Books retrieved successfully.');
     }
 
-    public function find()
+    public function find(): JsonResponse
     {
-        $data = Book::filter(request()->all())->orderBy('created_at', 'desc')->get();
+        $data = Book::FilterBook(request()->all())->orderBy('created_at', 'desc')->get();
 
-        if (!empty($data)) {
-            return $this->successResponse($data,'found books');
+        if (! empty($data)) {
+            return $this->failure($data, 'cant find this book.');
         }
-        return $this->successResponse($data,'found books');
+
+        return $this->success($data, 'found your book');
     }
 
-    public function store(StoreBookRequest $request)
+    public function store(StoreBookRequest $request): JsonResponse
     {
         $data = $request->validated();
 
         $book = Book::create($data);
 
         if ($book) {
-            return $this->successResponse(new BookResource($book), 'book created successfully');
-        } else {
-            return $this->errorResponse(null,'error',400);
+            return $this->success($book, 'book created successfully.');
         }
+
+        return $this->failure($book, 'cant create book.');
     }
 
-    public function show(Book $book)
+    public function show(Book $book): JsonResponse
     {
-        return $this->successResponse($book,'found book');
+        return $this->success($book);
     }
 
-    public function update(UpdateBookRequest $request, Book $book)
+    public function update(UpdateBookRequest $request, Book $book): JsonResponse
     {
         $book->update($request->validated());
 
-        return $this->successResponse($book,'book updated successfully');
+        return $this->success($book, 'book updated successfully.');
     }
 
-    public function destroy(Book $book)
+    public function destroy(Book $book): JsonResponse
     {
         $book->delete();
 
-        return $this->successResponse($book,'book deleted successfully');
+        return $this->success($book, 'book deleted successfully.');
     }
-
 }

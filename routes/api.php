@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\Books\BookController;
 use App\Http\Controllers\Reservtion\ReservationController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Books\BookController;
 
 Route::group(['prefix' => 'auth', 'as' => 'auth'], function () {
     Route::post('register', [AuthController::class, 'register'])->middleware('throttle:5,1');
@@ -27,5 +27,3 @@ Route::group(['prefix' => 'reservations', 'as' => 'reservations', 'middleware' =
     Route::patch('{reservation}/cancel', [ReservationController::class, 'cancelReservation']);
     Route::patch('{reservation}/return', [ReservationController::class, 'returnReservation']);
 });
-
-

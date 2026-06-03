@@ -18,14 +18,7 @@ class BookController extends Controller
 
     public function index(): JsonResponse
     {
-        //        $books = Cache::remember('books.list', 60, function () {
-        //            return Book::query()->get()->toArray();
-        //        });
-        $payload = Cache::remember('books', 60, function () {
-            $book = Book::all();
-
-            return BookResource::collection($book)->resolve();
-        });
+        $payload = Cache::remember('books', 60, fn () => BookResource::collection(Book::all()));
 
         return $this->success($payload, 'Books retrieved successfully.');
     }

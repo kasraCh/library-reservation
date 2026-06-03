@@ -26,11 +26,9 @@ class ReservationController extends Controller
 
         $key = sprintf('reservations%d', $userId);
 
-        $payload = Cache::remember($key, 60, function () use ($userId) {
-            $reservation = Reservation::where('user_id', $userId);
-
-            return ReservationResource::collection($reservation->get())->resolve();
-        });
+        $payload = Cache::remember($key, 60, fn () => ReservationResource::collection(
+            Reservation::where('user_id', $userId)->get()
+        )->resolve());
 
         return $this->success($payload, 'data received successfully');
     }

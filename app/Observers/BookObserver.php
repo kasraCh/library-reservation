@@ -10,7 +10,7 @@ class BookObserver
     /**
      * Handle the book "created" event.
      */
-    public function created(book $book): void
+    public function created(Book $book): void
     {
         Cache::forget('books.list');
     }
@@ -18,7 +18,7 @@ class BookObserver
     /**
      * Handle the book "updated" event.
      */
-    public function updated(book $book): void
+    public function updated(Book $book): void
     {
         Cache::forget('books.list');
     }
@@ -26,7 +26,7 @@ class BookObserver
     /**
      * Handle the book "deleted" event.
      */
-    public function deleted(book $book): void
+    public function deleted(Book $book): void
     {
         Cache::forget('books.list');
     }
@@ -34,7 +34,7 @@ class BookObserver
     /**
      * Handle the book "restored" event.
      */
-    public function restored(book $book): void
+    public function restored(Book $book): void
     {
         //
     }
@@ -42,7 +42,7 @@ class BookObserver
     /**
      * Handle the book "force deleted" event.
      */
-    public function forceDeleted(book $book): void
+    public function forceDeleted(Book $book): void
     {
         //
     }

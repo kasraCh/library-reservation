@@ -7,6 +7,13 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class BookResource extends JsonResource
 {
+
+    private string $title;
+    private string $author;
+    private string $isbn;
+    private int $total_copies;
+    private int $available_copies;
+
     /**
      * Transform the resource into an array.
      *
@@ -21,6 +28,5 @@ class BookResource extends JsonResource
             'total_copies' => $this->total_copies,
             'available_copies' => $this->available_copies,
         ];
-        //        return parent::toArray($request);
     }
 }

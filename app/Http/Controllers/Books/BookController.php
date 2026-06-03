@@ -50,15 +50,9 @@ class BookController extends Controller
 
     public function store(StoreBookRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        $book = Book::create($request->validated());
 
-        $book = Book::create($data);
-
-        if ($book) {
-            return $this->success(new BookResource($book), 'book created successfully.');
-        }
-
-        return $this->failure($book, 'cant create book.');
+        return $this->success(new BookResource($book), 'Book created successfully.');
     }
 
     public function show(Book $book): JsonResponse

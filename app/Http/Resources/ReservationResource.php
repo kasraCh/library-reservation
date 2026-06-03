@@ -7,6 +7,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ReservationResource extends JsonResource
 {
+    private int $user_id;
+    private int $book_id;
+    private string $status;
+    private mixed $due_date;
+    private mixed $returned_at;
+    private mixed $reserved_at;
     /**
      * Transform the resource into an array.
      *

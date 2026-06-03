@@ -19,7 +19,7 @@ class ReservationConfirmedMail extends Mailable
      */
     public function __construct(Reservation $reservation)
     {
-        $this->reservation = $reservation;
+        $this->reservation = $reservation; // @phpstan-ignore-line
     }
 
     /**

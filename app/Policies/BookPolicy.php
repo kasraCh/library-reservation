@@ -65,7 +65,7 @@ class BookPolicy
         return false;
     }
 
-    public function reserve(User $user, Book $book)
+    public function reserve(User $user, Book $book) : Response
     {
         if ($book->available_copies <= 0) {
             return Response::deny('not available');

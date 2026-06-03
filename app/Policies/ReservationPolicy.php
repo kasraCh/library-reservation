@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\reservation;
+use App\Models\Reservation;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
@@ -19,7 +19,7 @@ class ReservationPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, reservation $reservation): bool
+    public function view(User $user, Reservation $reservation): bool
     {
         return false;
     }
@@ -35,7 +35,7 @@ class ReservationPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, reservation $reservation): bool
+    public function update(User $user, Reservation $reservation): bool
     {
         return false;
     }
@@ -43,7 +43,7 @@ class ReservationPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, reservation $reservation): bool
+    public function delete(User $user, Reservation $reservation): bool
     {
         return false;
     }
@@ -51,7 +51,7 @@ class ReservationPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, reservation $reservation): bool
+    public function restore(User $user, Reservation $reservation): bool
     {
         return false;
     }
@@ -59,12 +59,12 @@ class ReservationPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, reservation $reservation): bool
+    public function forceDelete(User $user, Reservation $reservation): bool
     {
         return false;
     }
 
-    public function cancelReservation(User $user, reservation $reservation)
+    public function cancelReservation(User $user, Reservation $reservation) : Response
     {
         if ($reservation->user_id !== $user->id) {
             return Response::deny('You cannot cancel this reservation.');
@@ -77,7 +77,7 @@ class ReservationPolicy
 
     }
 
-    public function returnReservation(User $user, reservation $reservation)
+    public function returnReservation(User $user, Reservation $reservation) : Response
     {
         if ($reservation->user_id !== $user->id) {
             return Response::deny('You cannot cancel this reservation.');

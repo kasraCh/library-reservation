@@ -14,9 +14,9 @@ class SendReservationConfirmation implements ShouldQueue
 {
     use Queueable;
 
-    public $tries = 3;
+    public int $tries = 3;
 
-    public $backoff = [10, 30, 60];
+    public array|int $backoff = [10, 30, 60];
 
     public Reservation $reservation;
 

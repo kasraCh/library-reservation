@@ -18,15 +18,9 @@ class AuthController extends Controller
 
     public function register(RegisterRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        $user = User::create($request->validated());
 
-        if ($user = User::create($data)) {
-            $token = $user->createToken('auth_token')->plainTextToken;
-
-            return $this->success(new UserResource($user), 'User registered successfully.', ['token' => $token]);
-        }
-
-        return $this->failure();
+        return $this->success(new UserResource($user), 'User registered successfully.');
     }
 
     public function login(LoginRequest $request): JsonResponse
@@ -35,7 +29,9 @@ class AuthController extends Controller
 
         $user = User::where('email', $data['email'])->first();
 
-        if (! $user || ! Hash::check($data['password'], $user->password)) {
+        $password = $request->string('password')->toString();
+
+        if (! $user || ! Hash::check($password, $user->password)) {
             return $this->failure(null, 'Invalid credentials.');
         }
         $token = $user->createToken('auth_token')->plainTextToken;
@@ -45,10 +41,15 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        if ($request->user()->currentAccessToken()->delete()) {
-            return $this->success(null, 'User logged out successfully.');
+        $user = $request->user();
+
+        if (! $user) {
+            return $this->failure(null, 'Something went wrong., Please try again later.');
         }
 
-        return $this->failure(null, 'Something went wrong., Please try again later.');
+        $user->currentAccessToken()->delete();
+
+        return $this->success(null, 'User logged out successfully.');
+
     }
 }

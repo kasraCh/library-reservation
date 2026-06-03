@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Observers\BookObserver;
+use http\QueryString;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Query\Builder;
 
 #[ObservedBy(BookObserver::class)]
 class Book extends Model
@@ -23,19 +25,9 @@ class Book extends Model
         return $this->hasMany(Reservation::class);
     }
 
-    public function scopeFindBook($query, string $search)
+    public function scopeFindBook($query, string $search): Builder
     {
         return $query->where('title', 'like', "%{$search}%");
     }
 
-    //    public function scopeFilterBook($query, array $filters)
-    //    {
-    //        $query
-    //            ->when($filters['search'] ?? null, function ($query) use ($filters) {
-    //                $query->where('title', 'LIKE', "%{$filters['search']}%");
-    //            })
-    //            ->when($filters['isbn'] ?? null, function ($query) use ($filters) {
-    //                $query->where('isbn', 'LIKE', "%{$filters['isbn']}%");
-    //            });
-    //    }
 }

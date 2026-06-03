@@ -1,5 +1,7 @@
 <?php
+
 declare(strict_types=1);
+
 namespace App\Http\Controllers\Reservation;
 
 use App\Events\ReservationCreated;
@@ -22,18 +24,20 @@ class ReservationController extends Controller
     {
         $userId = auth()->id();
 
-        $key = 'reservations'.$userId;
+        $key = sprintf('reservations%d', $userId);
 
-        $data = Cache::remember($key, 60, function () use ($userId) {
-            return Reservation::where('user_id', $userId)->get()->toArray();
+        $payload = Cache::remember($key, 60, function () use ($userId) {
+            $reservation = Reservation::where('user_id', $userId);
+
+            return ReservationResource::collection($reservation->get())->resolve();
         });
 
-        return $this->success(ReservationResource::collection($data), 'Reservations retrieved successfully.');
+        return $this->success($payload, 'data received successfully');
     }
 
     public function reservationDetail(Reservation $reservation): JsonResponse
     {
-        return $this->success($reservation->toArray(), 'Reservation retrieved successfully.');
+        return $this->success(new ReservationResource($reservation), 'Reservation retrieved successfully.');
     }
 
     public function reserveBook(Book $book): JsonResponse

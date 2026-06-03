@@ -18,11 +18,16 @@ class BookController extends Controller
 
     public function index(): JsonResponse
     {
-        $books = Cache::remember('books.list', 60, function () {
-            return Book::query()->get()->toArray();
+        //        $books = Cache::remember('books.list', 60, function () {
+        //            return Book::query()->get()->toArray();
+        //        });
+        $payload = Cache::remember('books', 60, function () {
+            $book = Book::all();
+
+            return BookResource::collection($book)->resolve();
         });
 
-        return $this->success(BookResource::collection($books), 'Books retrieved successfully.');
+        return $this->success($payload, 'Books retrieved successfully.');
     }
 
     public function find(Request $request): JsonResponse
@@ -30,7 +35,9 @@ class BookController extends Controller
         $search = trim((string) $request->query('search'));
 
         if ($search === '') {
-            return $this->failure(null, 'Search term is required.');
+            $book = Book::all();
+
+            return $this->success($book, 'Books retrieved successfully.');
         }
 
         $books = Book::query()
@@ -47,10 +54,6 @@ class BookController extends Controller
             'Books found successfully'
         );
     }
-
-
-
-
 
     public function store(StoreBookRequest $request): JsonResponse
     {
